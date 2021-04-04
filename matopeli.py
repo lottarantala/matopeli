@@ -1,6 +1,7 @@
 #---Matopeli by Lotta Rantala---
 import pygame
 import random as r
+import os
 pygame.font.init()
 
 #aloitusasetelmat
@@ -21,7 +22,7 @@ kuvat = {
     "tausta" : None
 }
 
-LEVEYS, KORKEUS = 900, 500
+LEVEYS = KORKEUS = 500
 #yksi käärmeen "osa" on 20x20
 K_LEVEYS, K_KORKEUS = 20, 20
 #peliruutu
@@ -32,18 +33,17 @@ FPS = 4
 
 def lataa_kuvat(kuvat):
     #ladataan kuvat ja skaalataan ne sopivan kokoisiksi
-    paa = pygame.image.load(r"C:\Users\lotta\Desktop\matopeli\kuvat\kaarmeen_paa.png")
+    paa = pygame.image.load(os.path.join("kuvat", "kaarmeen_paa.png"))
     kuvat["paa"] = pygame.transform.scale(paa, (K_LEVEYS, K_KORKEUS))
-    vartalo = pygame.image.load(r"C:\Users\lotta\Desktop\matopeli\kuvat\kaarmeen_vartalo.png")
+    vartalo = pygame.image.load(os.path.join("kuvat", "kaarmeen_vartalo.png"))
     kuvat["vartalo"] = pygame.transform.scale(vartalo, (K_LEVEYS, K_KORKEUS))
-    ruoka = pygame.image.load(r"C:\Users\lotta\Desktop\matopeli\kuvat\hamppari.png")
+    ruoka = pygame.image.load(os.path.join("kuvat", "hamppari.png"))
     kuvat["ruoka"] = pygame.transform.scale(ruoka, (K_LEVEYS, K_KORKEUS))
-    kuvat["tausta"] = pygame.image.load(r"C:\Users\lotta\Desktop\matopeli\kuvat\tausta.png")
+    tausta = pygame.image.load(os.path.join("kuvat", "tausta.png"))
+    kuvat["tausta"] = pygame.transform.scale(tausta, (LEVEYS, KORKEUS))
 
 def piirra_ikkuna():
     WIN.blit(kuvat["tausta"], (0, 0))
-    teksti = fontti.render("Pisteet: " +str(mato["pisteet"]), 1, (255, 255, 255))
-    WIN.blit(teksti, (10, 10))
     #ensin piirretään ruoka
     if len(mato["ruoka"]) != 0:
         WIN.blit(kuvat["ruoka"], (mato["ruoka"][0]))
@@ -52,6 +52,9 @@ def piirra_ikkuna():
         WIN.blit(kuvat["vartalo"], (mato["osat"][i]))    
     #piirtää pään siihen missä sen kuuluu olla; edessä
     WIN.blit(kuvat["paa"], (mato["osat"][0]))
+    #pisteet
+    teksti = fontti.render("Pisteet: " +str(mato["pisteet"]), 1, (255, 255, 255))
+    WIN.blit(teksti, (10, 10))
     pygame.display.update()
 
 def aseta_suunta(suunta):
@@ -78,15 +81,12 @@ def tarkista_tormays(mato):
     paa_x, paa_y = mato["osat"][0]
     #tarkistaa onko mato mennyt rajojen ulkopuolelle pituussuunnassa
     if paa_y < 0 or paa_y + 20 > KORKEUS:
-        print("törmäys")
         mato["päällä"] = False
     #tarkistaa onko mato mennyt rajojen ulkopuolelle leveyssuunnassa
     if paa_x < 0 or paa_x + 20 > LEVEYS:
-        print("törmäys")
         mato["päällä"] = False
     #tarkistaa osuuko pää muuhun kehoon
     if (paa_x, paa_y) in mato["osat"][1:]:
-        print("törmäys")
         mato["päällä"] = False
     #tarkistaa osuuko pää ruokaan eli syökö mato
     if len(mato["ruoka"]) != 0:
@@ -108,13 +108,13 @@ def luo_ruoka():
         return mato["ruoka"]
 
 def havio():
-    havio_fontti = pygame.font.SysFont("KiwiMaru-Light", 60)
+    havio_fontti = pygame.font.SysFont("KiwiMaru-Light", 40)
     teksti_1 = havio_fontti.render("Hävisit pelin noob :(", 1, (255, 255, 255))
     teksti_2 = havio_fontti.render("Sait " +str(mato["pisteet"]) + " pistettä", 1, (255, 255, 255))
-    WIN.blit(teksti_1, (230, 160))
-    WIN.blit(teksti_2, (250, 200))
+    WIN.blit(teksti_1, (130, 160))
+    WIN.blit(teksti_2, (150, 200))
     pygame.display.update()
-    pygame.time.delay(8000)
+    pygame.time.delay(5000)
     #laitetaan oletusasetukset ja aloitetaan peli uudestaan
     mato["osat"] = [(440, 240), (440, 260), (440, 280)]
     mato["pituus"] = 3
@@ -125,7 +125,6 @@ def havio():
     main()
 
 def main():
-    lataa_kuvat(kuvat)
     kello = pygame.time.Clock()
     while mato["päällä"]:
         #asetetaan FPS, jottei mato kulje liian lujaa
@@ -152,4 +151,5 @@ def main():
     havio()
 
 if __name__ == "__main__":
+    lataa_kuvat(kuvat)
     main()
