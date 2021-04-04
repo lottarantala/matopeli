@@ -14,7 +14,7 @@ mato = {
     "päällä" : True
 }
 
-#sailytetaan kuvat täällä, helppo päästä käsiksi
+#säilytetään kuvat täällä, helppo päästä käsiksi
 kuvat = {
     "paa" : None,
     "vartalo" : None,
